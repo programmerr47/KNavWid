@@ -1,4 +1,4 @@
-package com.github.programmerr47.knavwid
+package com.github.programmerr47.knavwidsample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
