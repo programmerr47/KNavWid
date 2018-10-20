@@ -27,8 +27,8 @@ abstract class NavigationFragment : Fragment(), OnTabSelectedListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        toolbar = bind(view, navigationBuilder.toolbarId)
-        bottomNavigation = bind(view, navigationBuilder.bottomBarId)
+        toolbar = view.bind(navigationBuilder.toolbarId)
+        bottomNavigation = view.bind(navigationBuilder.bottomBarId)
         prepareNavigation()
     }
 

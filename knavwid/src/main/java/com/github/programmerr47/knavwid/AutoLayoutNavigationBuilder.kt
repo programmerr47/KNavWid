@@ -9,11 +9,14 @@ class AutoLayoutNavigationBuilder(layoutFactory: LayoutFactory) : NavigationBuil
 ) {
     private var includeToolbar: Boolean = false
     private var includeBottomBar: Boolean = false
+    private var withoutShadow: Boolean = false
+
+    private var tabTitleReses: IntArray? = null
 
     override val `this`: AutoLayoutNavigationBuilder get() = this
 
     override fun layoutFactory() = 
-        NavigationLayoutFactory(includeToolbar, includeBottomBar, super.layoutFactory())
+        NavigationLayoutFactory(includeToolbar, includeBottomBar, tabTitleReses, withoutShadow, super.layoutFactory())
 
     fun includeToolbar() = apply {
         this.includeToolbar = true
@@ -21,6 +24,14 @@ class AutoLayoutNavigationBuilder(layoutFactory: LayoutFactory) : NavigationBuil
 
     fun excludeToolbar() = apply {
         this.includeToolbar = false
+    }
+
+    fun withoutShadow() = apply {
+        this.withoutShadow = true
+    }
+
+    fun tabs(vararg titleReses: Int) = apply {
+        this.tabTitleReses = titleReses
     }
 
     fun includeBottomNavigation() = apply {

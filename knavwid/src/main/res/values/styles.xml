@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Knavwid.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Knavwid.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Knavwid.TabLayout" parent="Widget.MaterialComponents.TabLayout.Colored"/>
 </resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="knavwid_divider">#1f000000</color>
+    <color name="knavwid_bg_tablayout">#ffffff</color>
+    <color name="knavwid_bg_tab">#ffffff</color>
+</resources>

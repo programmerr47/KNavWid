@@ -24,6 +24,6 @@ private fun applyDimen(context: Context, value: Float, unit: Int): Float {
     return TypedValue.applyDimension(unit, value, res.displayMetrics)
 }
 
-fun <T> bind(view: View, id: Int): T {
-    return view.findViewById<View>(id) as T
+inline fun <T> View.bind(id: Int, init: T.() -> Unit = {}): T {
+    return (findViewById<View>(id) as T).apply(init)
 }
