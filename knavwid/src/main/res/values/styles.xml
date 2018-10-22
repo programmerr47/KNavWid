@@ -3,5 +3,7 @@
     <style name="Knavwid.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="Knavwid.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Knavwid.TabLayout" parent="Widget.MaterialComponents.TabLayout.Colored"/>
+    <style name="Knavwid.TabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
+        <item name="android:background">?attr/colorPrimary</item>
+    </style>
 </resources>

@@ -11,5 +11,6 @@ class MainActivity : NavigationActivity() {
             .includeToolbar()
             .toolbarTitle("Test Title")
             .toolbarSubtitle("Subtitle for test")
+            .tabs(R.string.app_name, R.string.app_name)
     }
 }
