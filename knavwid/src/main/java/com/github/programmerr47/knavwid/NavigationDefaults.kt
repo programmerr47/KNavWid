@@ -2,6 +2,7 @@ package com.github.programmerr47.knavwid
 
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.view.View.NO_ID
 import androidx.annotation.DrawableRes
 import com.github.programmerr47.knavwid.NavigationIcons.NavigationIcon
 
@@ -16,6 +17,9 @@ class NavigationDefaults {
         private set
     var defaultBottomNavigationItem: Int = 0
         private set
+
+    var toolbarId: Int = NO_ID
+    var bottomBarId: Int = NO_ID
 
     fun navigationItems(vararg navigationItems: NavigationItems.NavigationItem) = apply {
         this.navigationItems.addAll(*navigationItems)

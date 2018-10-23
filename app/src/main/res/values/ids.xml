@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="sandbox_toolbar" type="id"/>
+    <item name="sandbox_bottombar" type="id"/>
+</resources>

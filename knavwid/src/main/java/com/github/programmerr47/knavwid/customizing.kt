@@ -5,7 +5,8 @@ import androidx.appcompat.widget.Toolbar
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 
 class NavigationCustomizer(
-    private val navigationBuilder: NavigationBuilder<*>,
+    private val navigation: ShortNavigationInfo,
+    private val defaults: NavigationDefaults = NavigationDefaults.NavigationDefaultsHolder.navigationDefaults()!!,
     private val backListener: View.OnClickListener? = null
 ) {
     fun prepareNavigation(toolbar: Toolbar?, bottomNav: AHBottomNavigation?) {
@@ -13,55 +14,59 @@ class NavigationCustomizer(
         bottomNav?.prepare()
     }
 
-    private fun Toolbar.prepare() {
+    private fun Toolbar.prepare() = navigation.toolbar?.let { info ->
         when {
-            navigationBuilder.toolbarTitleRes != 0 -> setTitle(navigationBuilder.toolbarTitleRes)
-            else -> title = navigationBuilder.toolbarTitle
+            info.titleRes != 0 -> {
+                setTitle(info.titleRes)
+            }
+            else -> {
+                title = info.title
+            }
         }
 
         when {
-            navigationBuilder.toolbarSubtitleRes != 0 -> setSubtitle(navigationBuilder.toolbarSubtitleRes)
-            else -> subtitle = navigationBuilder.toolbarSubtitle
+            info.subtitleRes != 0 -> setSubtitle(info.subtitleRes)
+            else -> subtitle = info.subtitle
         }
 
         when {
-            navigationBuilder.toolbarLogoRes != 0 -> setLogo(navigationBuilder.toolbarLogoRes)
-            else -> logo = navigationBuilder.toolbarLogo
+            info.logoRes != 0 -> setLogo(info.logoRes)
+            else -> logo = info.logo
         }
 
         when {
-            navigationBuilder.toolbarNavigationIcon == NavigationBuilder.NO_NAV_ICON -> {
+            info.navIcon == NO_NAV_ICON -> {
                 navigationIcon = null
                 setNavigationOnClickListener(null)
             }
             else -> {
-                val navIcon = navigationBuilder.navigationDefaults().navigationIcons
-                    .fromType(navigationBuilder.toolbarNavigationIcon)
+                val navIcon = defaults.navigationIcons.fromType(info.navIcon)
                 navigationIcon = navIcon?.iconDrawable(context)
-                setNavigationOnClickListener(backListener ?: navigationBuilder.navigationDefaults().navigationIconListener)
+                setNavigationOnClickListener(backListener ?: defaults.navigationIconListener)
             }
         }
 
         menu?.clear()
-        if (!navigationBuilder.menuRes.isEmpty()) {
-            val actions = navigationBuilder.menuActions.build()
-            for (menuRes in navigationBuilder.menuRes) {
+        if (!info.menuReses.isEmpty()) {
+            val actions = info.menuActions.build()
+            for (menuRes in info.menuReses) {
                 inflateMenu(menuRes)
             }
             setOnMenuItemClickListener { item -> actions.onMenuItemClick(item) }
         }
     }
 
-    fun AHBottomNavigation.prepare() {
-        val navigationItems = navigationBuilder.navigationDefaults().navigationItems
+    fun AHBottomNavigation.prepare() = navigation.bottomBar?.let {info ->
+        val navigationItems = defaults.navigationItems
         removeAllItems()
         addItems(navigationItems.bottomNavigationItems())
         setCurrentItem(
-            navigationItems.indexFromType(navigationBuilder.currentBottomBarItem),
+            navigationItems.indexFromType(info.current),
             false
         )
         setOnTabSelectedListener { pos, wasSelected ->
-            val itemType = navigationBuilder.navigationDefaults().navigationItems[pos].type
+            val itemType = defaults.navigationItems[pos].type
+            //todo
             true
         }
         titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW

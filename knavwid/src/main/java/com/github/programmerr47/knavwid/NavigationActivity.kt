@@ -2,7 +2,7 @@ package com.github.programmerr47.knavwid
 
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.CallSuper
+import android.view.View.NO_ID
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
@@ -15,11 +15,11 @@ import com.github.programmerr47.knavwid.layoutfactory.produceLayout
  */
 abstract class NavigationActivity : AppCompatActivity() {
 
-    private lateinit var navigationBuilder: NavigationBuilder<*>
+    private lateinit var navigationBuilder: NavigationBuilderNew
     private lateinit var navigationCustomizer: NavigationCustomizer
+    private val navigationDefaults: NavigationDefaults = NavigationDefaults.NavigationDefaultsHolder.navigationDefaults()!!
 
-    protected open fun buildNavigation(): NavigationBuilder<*> =
-            CustomLayoutNavigationBuilder(DummyLayoutFactory)
+    protected open fun buildNavigation(): NavigationBuilderNew = navigation(DummyLayoutFactory).auto()
 
     protected var toolbar: Toolbar? = null
     protected var bottomNavigation: AHBottomNavigation? = null
@@ -29,12 +29,12 @@ abstract class NavigationActivity : AppCompatActivity() {
         navigationBuilder = buildNavigation()
         navigationCustomizer = NavigationCustomizer(navigationBuilder)
 
-        val root = navigationBuilder.layoutFactory().produceLayout(this).also {
+        val root = navigationBuilder.layoutFactory.produceLayout(this).also {
             setContentView(it)
         }
 
-        toolbar = root?.bind(navigationBuilder.toolbarId)
-        bottomNavigation = root?.bind(navigationBuilder.bottomBarId)
+        toolbar = root?.bind(correctId(navigationBuilder.toolbar?.id, navigationDefaults.toolbarId))
+        bottomNavigation = root?.bind(correctId(navigationBuilder.bottomBar?.id, navigationDefaults.bottomBarId))
         navigationCustomizer.prepareNavigation(toolbar, bottomNavigation)
     }
 
@@ -44,7 +44,7 @@ abstract class NavigationActivity : AppCompatActivity() {
         bottomNavigation = null
     }
 
-    protected fun invalidateNavigation(newNavigation: NavigationBuilder<*>) {
+    protected fun invalidateNavigation(newNavigation: NavigationBuilderNew) {
         navigationBuilder = newNavigation
         navigationCustomizer.prepareNavigation(toolbar, bottomNavigation)
     }
@@ -56,4 +56,6 @@ abstract class NavigationActivity : AppCompatActivity() {
     fun hideBottomNavigation() {
         bottomNavigation?.visibility = View.GONE
     }
+
+    private fun correctId(id: Int?, fallback: Int) = if ((id ?: NO_ID) == NO_ID) fallback else id!!
 }

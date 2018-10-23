@@ -12,6 +12,9 @@ class SandboxApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        NavigationDefaults.NavigationDefaultsHolder.initDefaults(NavigationDefaults())
+        NavigationDefaults.NavigationDefaultsHolder.initDefaults(NavigationDefaults().apply {
+            toolbarId = R.id.sandbox_toolbar
+            bottomBarId = R.id.sandbox_bottombar
+        })
     }
 }

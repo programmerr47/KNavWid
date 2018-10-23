@@ -6,60 +6,67 @@ import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.NO_ID
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
-import com.github.programmerr47.knavwid.R
 
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout.VERTICAL
 import androidx.annotation.LayoutRes
-import com.github.programmerr47.knavwid.bind
-import com.github.programmerr47.knavwid.dp
-import com.github.programmerr47.knavwid.getColorCompat
+import androidx.appcompat.widget.Toolbar
+import com.github.programmerr47.knavwid.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 
 class NavigationLayoutFactory(
-    private val includeToolbar: Boolean,
-    private val includeBottomBar: Boolean,
-    private val tabTitleReses: IntArray?,
-    private val withoutShadow: Boolean,
-    private val origin: LayoutFactory
-) : LayoutFactory {
+    private val navigationInfo: NavigationInfo,
+    private val defaults: NavigationDefaults,
+    private val origin: LayoutFactory) : LayoutFactory {
 
     override fun produceLayout(inflater: LayoutInflater, container: ViewGroup?) = LinearLayout(inflater.context).apply {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
         orientation = VERTICAL
 
-        if (includeToolbar) {
+        navigationInfo.toolbar?.let { toolbar ->
             inflater.inflate(R.layout.toolbar, this)
             bind<AppBarLayout>(R.id.appBarLayout) {
-                if (tabTitleReses != null) {
+                if (navigationInfo.tabs.count() != 0) {
                     addView(divider(context))
                     addView(tabLayout(context).apply {
-                        tabTitleReses.forEach { tabTitleRes ->
-                            addTab(newTab().setText(tabTitleRes))
+                        navigationInfo.tabs.forEach { tab ->
+                            addTab(newTab().run {
+                                when {
+                                    tab.titleRes != 0 -> setText(tab.titleRes)
+                                    else -> setText(tab.title)
+                                }
+                            })
                         }
                     })
                 }
 
                 setStateListElevationAnimator(getShadowHeight())
 
-                if (withoutShadow) {
+                if (!toolbar.withShadow) {
                     addView(divider(context))
                 }
+            }
+
+            bind<Toolbar>(R.id.toolbar) {
+                id = correctId(toolbar.id, defaults.toolbarId)
             }
         }
 
         val child = origin.produceLayout(inflater, this)
         val childParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
-            if (includeBottomBar) weight = 1f
+            if (navigationInfo.bottomBar != null) weight = 1f
         }
         addView(child, childParams)
 
-        if (includeBottomBar) {
-            val bottomNavigation = AHBottomNavigation(context)
+        navigationInfo.bottomBar?.let { bottomBar ->
+            val bottomNavigation = AHBottomNavigation(context).apply {
+                id = correctId(bottomBar.id, defaults.bottomBarId)
+            }
             addView(
                 bottomNavigation,
                 LinearLayout.LayoutParams(MATCH_PARENT, dp(context, 56f).toInt())
@@ -86,8 +93,10 @@ class NavigationLayoutFactory(
     }
 
     private fun View.getShadowHeight(): Float {
-        return if (withoutShadow) 0f else context.resources.getDimension(R.dimen.knavwid_toolbar_shadow_height)
+        return if (navigationInfo.toolbar?.withShadow ?: true) context.resources.getDimension(R.dimen.knavwid_toolbar_shadow_height) else 0f
     }
 
     private fun isLollipop() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+
+    private fun correctId(id: Int, fallback: Int) = if (id == NO_ID) fallback else id
 }
